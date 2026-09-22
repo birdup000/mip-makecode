@@ -142,10 +142,6 @@
         }
 
         async function connect(acceptAll) {
-            if (!root.isSecureContext) {
-                emitStatus(false, "", 5)
-                return
-            }
             const bluetooth = root.navigator && root.navigator.bluetooth
             if (!bluetooth) {
                 emitStatus(false, "", 1)
