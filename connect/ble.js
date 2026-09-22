@@ -128,10 +128,32 @@
             pump()
         }
 
+        async function checkPermission() {
+            const perms = root.navigator && root.navigator.permissions
+            if (perms && typeof perms.query === "function") {
+                try {
+                    const result = await perms.query({ name: "bluetooth" })
+                    return result.state
+                } catch (e) {
+                    return "unknown"
+                }
+            }
+            return "unknown"
+        }
+
         async function connect(acceptAll) {
+            if (!root.isSecureContext) {
+                emitStatus(false, "", 5)
+                return
+            }
             const bluetooth = root.navigator && root.navigator.bluetooth
             if (!bluetooth) {
                 emitStatus(false, "", 1)
+                return
+            }
+            const permState = await checkPermission()
+            if (permState === "denied") {
+                emitStatus(false, "", 6)
                 return
             }
             try {
@@ -203,7 +225,8 @@
             name: function () { return linkName },
             connect: connect,
             disconnect: disconnect,
-            write: enqueue
+            write: enqueue,
+            checkPermission: checkPermission
         }
     }
 
@@ -268,7 +291,9 @@
                     1: "This browser cannot use Bluetooth",
                     2: "No robot was picked",
                     3: "Could not connect",
-                    4: "Robot disconnected"
+                    4: "Robot disconnected",
+                    5: "Not a secure context. Use localhost or HTTPS.",
+                    6: "Bluetooth blocked. Allow it in browser settings."
                 }
                 setLabel(errors[error] || "Connection problem")
                 postToGame(new Uint8Array([OP_ERROR, error]))
