@@ -34,10 +34,23 @@ session.onStatus(function (isConnected, name, error) {
     else if (error === 2) showStatus("No robot was picked.")
     else if (error === 3) showStatus("Could not connect. Wake MiP and try again.")
     else if (error === 4) showStatus("MiP disconnected.")
+    else if (error === 5) showStatus("This page is not in a secure context. Serve it over HTTPS or open via localhost (e.g. python3 -m http.server).")
+    else if (error === 6) showStatus("Bluetooth permission was denied. Click the lock icon in the address bar and allow Bluetooth, then reload.")
     else if (isConnected) showStatus("Connected to " + (name || "MiP") + ".")
     else showStatus("Not connected.")
     connectButton.textContent = isConnected ? "Disconnect" : "Connect MiP"
 })
+
+// Show current Bluetooth permission state on page load.
+if (session.checkPermission) {
+    session.checkPermission().then(function (state) {
+        if (state === "denied") {
+            showStatus("Bluetooth is blocked for this site. Click the lock icon in the address bar and allow Bluetooth, then reload.")
+        } else if (state === "granted") {
+            showStatus("Bluetooth ready. Connect MiP to begin.")
+        }
+    })
+}
 
 connectButton.addEventListener("click", function () {
     if (session.isConnected()) {
