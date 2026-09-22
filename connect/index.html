@@ -55,6 +55,31 @@
         .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
         .status { min-height: 1.4em; font-weight: 650; }
         .hex { font-family: ui-monospace, monospace; color: var(--muted); min-height: 1.4em; }
+        .warn {
+            background: #fff3e0;
+            border: 1px solid #f0c28a;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 0 0 12px;
+        }
+        .warn[hidden] { display: none; }
+        .warn code {
+            font-family: ui-monospace, monospace;
+            font-size: 14px;
+            background: #f6e3c6;
+            padding: 1px 5px;
+            border-radius: 5px;
+        }
+        .warn code[data-bt-cmd] {
+            display: block;
+            background: #1c1915;
+            color: #f3ecdf;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow-x: auto;
+            user-select: all;
+        }
         .pad {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -96,6 +121,15 @@
         <section>
             <h2>Direct control</h2>
             <p class="status" data-status>Not connected.</p>
+            <div class="warn" data-bt-help hidden>
+                <strong>Web Bluetooth is switched off in this browser.</strong>
+                On Linux, Chrome, Chromium, Edge and Brave ship with it disabled, so no Bluetooth picker can open and no robot can show up.
+                Quit every browser window, then run <code>./start.sh</code> from this folder, or start your browser with this command:
+                <code data-bt-cmd></code>
+                <div class="row">
+                    <button type="button" class="quiet" data-copy-cmd>Copy command</button>
+                </div>
+            </div>
             <div class="row">
                 <button type="button" data-connect>Connect MiP</button>
                 <button type="button" class="quiet" data-any>Other device</button>
@@ -148,13 +182,13 @@
                 <button type="button" class="quiet" data-copy>Copy bookmarklet</button>
             </div>
             <ol>
-                <li>In this folder run python3 -m http.server, then open the page in Chrome or Edge.</li>
+                <li>In this folder run <code>./start.sh</code> (it serves the page and opens Chrome with Bluetooth switched on).</li>
                 <li>Drag <strong>MiP Connect</strong> to the bookmarks bar.</li>
                 <li>On the MakeCode Arcade home screen, choose Import, then Import URL, and paste this repository. The MiP blocks are already in that project.</li>
                 <li>Click the bookmark. A MiP card appears. Choose Connect and pick the robot named Mip-…</li>
                 <li>Use the MiP blocks. The line at the bottom of the simulator shows the link.</li>
             </ol>
-            <p>Chrome and Edge on a computer or Android can open the Bluetooth chooser. Safari cannot.</p>
+            <p>Chrome and Edge on a computer or Android can open the Bluetooth chooser. Safari cannot. On Linux, Chrome needs <code>--enable-features=WebBluetooth</code>, which <code>start.sh</code> passes for you.</p>
         </section>
     </div>
 </main>

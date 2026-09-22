@@ -18,7 +18,9 @@ The starter program uses the arrow keys to drive. **A** turns the chest green an
 
 The simulator cannot open the Bluetooth chooser itself. A bookmark on the MakeCode page does that. Use Chrome or Edge. Turn MiP on and stand it upright. It shows up with a name like `Mip-14915`.
 
-1. In the `connect` folder, run `python3 -m http.server` and open `http://127.0.0.1:8000/`.
+On Linux, Chrome ships with Web Bluetooth switched off, so `navigator.bluetooth` does not exist and no picker ever opens. Chrome must be started with `--enable-features=WebBluetooth`.
+
+1. In the `connect` folder, run `./start.sh`. It serves the page and opens Chrome with Web Bluetooth enabled at `http://127.0.0.1:8000/`. (Or run `python3 -m http.server 8000` yourself and start Chrome with `google-chrome --enable-features=WebBluetooth http://127.0.0.1:8000/`.) Quit every other Chrome window first, otherwise the flag is ignored.
 2. Drag **MiP Connect** onto the bookmarks bar.
 3. Go back to the Arcade project and start the simulator.
 4. Click the bookmark, then **Connect MiP**, and pick the robot.

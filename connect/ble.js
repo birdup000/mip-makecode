@@ -284,7 +284,7 @@
             postToGame(statusPacket(isConnected, name))
             if (error) {
                 const errors = {
-                    1: "This browser cannot use Bluetooth",
+                    1: "Web Bluetooth is off. Start Chrome with --enable-features=WebBluetooth",
                     2: "No robot was picked",
                     3: "Could not connect",
                     4: "Robot disconnected",

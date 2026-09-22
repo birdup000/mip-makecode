@@ -8,6 +8,30 @@ let connecting = false
 const statusNode = document.querySelector("[data-status]")
 const hexNode = document.querySelector("[data-hex]")
 const connectButton = document.querySelector("[data-connect]")
+const helpNode = document.querySelector("[data-bt-help]")
+const cmdNode = document.querySelector("[data-bt-cmd]")
+const bluetoothReady = !!(navigator.bluetooth && navigator.bluetooth.requestDevice)
+const userAgent = navigator.userAgent
+const isChromium = /Chrome|Chromium|Edg\//.test(userAgent)
+
+const launchCommand = (function () {
+    let binary = "google-chrome"
+    if (/Edg\//.test(userAgent)) binary = "microsoft-edge"
+    else if (typeof navigator.brave !== "undefined") binary = "brave-browser"
+    else if (/Chromium\//.test(userAgent)) binary = "chromium"
+    return binary + " --enable-features=WebBluetooth " + location.href
+})()
+
+function bluetoothOffMessage() {
+    if (!isChromium) return "This browser has no Web Bluetooth. Open this page in Chrome, Edge or Brave."
+    return "Web Bluetooth is off in this browser. Quit it completely, then run start.sh from this folder."
+}
+
+function showBluetoothHelp() {
+    if (!helpNode) return
+    if (cmdNode) cmdNode.textContent = launchCommand
+    helpNode.hidden = false
+}
 
 function showStatus(text) {
     statusNode.textContent = text
@@ -30,7 +54,10 @@ function send(bytes) {
 session.onStatus(function (isConnected, name, error) {
     connecting = false
     connectButton.disabled = false
-    if (error === 1) showStatus("This browser cannot open Bluetooth. Use Chrome or Edge.")
+    if (error === 1) {
+        showBluetoothHelp()
+        showStatus(bluetoothOffMessage())
+    }
     else if (error === 2) showStatus("No robot was picked.")
     else if (error === 3) showStatus("Could not connect. Wake MiP and try again.")
     else if (error === 4) showStatus("MiP disconnected.")
@@ -42,9 +69,13 @@ session.onStatus(function (isConnected, name, error) {
 })
 
 // Show current Bluetooth permission state on page load.
-if (session.checkPermission) {
+if (!bluetoothReady) {
+    showBluetoothHelp()
+    showStatus(bluetoothOffMessage())
+} else if (session.checkPermission) {
     session.checkPermission().then(function (state) {
         if (state === "denied") {
+            showBluetoothHelp()
             showStatus("Bluetooth is blocked for this site. Click the lock icon in the address bar and allow Bluetooth, then reload.")
         } else if (state === "granted") {
             showStatus("Bluetooth ready. Connect MiP to begin.")
@@ -52,23 +83,41 @@ if (session.checkPermission) {
     })
 }
 
+function beginConnect(acceptAll) {
+    if (connecting) return
+    if (!bluetoothReady) {
+        showBluetoothHelp()
+        showStatus(bluetoothOffMessage())
+        return
+    }
+    connecting = true
+    connectButton.disabled = true
+    showStatus("Look for the Bluetooth picker in Chrome and choose Mip-…")
+    session.connect(acceptAll)
+}
+
 connectButton.addEventListener("click", function () {
     if (session.isConnected()) {
         session.disconnect()
         return
     }
-    if (connecting) return
-    connecting = true
-    connectButton.disabled = true
-    session.connect(false)
+    beginConnect(false)
 })
 
 document.querySelector("[data-any]").addEventListener("click", function () {
-    if (connecting) return
-    connecting = true
-    connectButton.disabled = true
-    session.connect(true)
+    beginConnect(true)
 })
+
+const copyCommandButton = document.querySelector("[data-copy-cmd]")
+if (copyCommandButton) {
+    copyCommandButton.addEventListener("click", function () {
+        navigator.clipboard.writeText(launchCommand).then(function () {
+            copyCommandButton.textContent = "Command copied"
+        }).catch(function () {
+            showBluetoothHelp()
+        })
+    })
+}
 
 document.querySelector("[data-stop]").addEventListener("click", function () {
     wasMoving = false
