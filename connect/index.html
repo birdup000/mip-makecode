@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiP controller</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #1c1915;
+            --paper: #f3ecdf;
+            --card: #fffaf3;
+            --line: #e4d8c6;
+            --accent: #e85d04;
+            --accent-ink: #fff;
+            --muted: #5c5348;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font: 16px/1.45 "Segoe UI", system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, #ffe8d2, transparent 36%),
+                var(--paper);
+        }
+        main { max-width: 880px; margin: 0 auto; padding: 28px 18px 64px; }
+        h1 { font-size: 2rem; margin: 0 0 8px; }
+        h2 { font-size: 1.15rem; margin: 0 0 8px; }
+        p { margin: 0 0 12px; }
+        .lede { color: var(--muted); max-width: 62ch; }
+        .grid { display: grid; gap: 16px; }
+        @media (min-width: 800px) {
+            .grid { grid-template-columns: 1.1fr .9fr; }
+        }
+        section {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        button, select, input {
+            font: inherit;
+        }
+        button {
+            border: 0;
+            border-radius: 10px;
+            background: var(--accent);
+            color: var(--accent-ink);
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+        button:disabled { opacity: .6; cursor: wait; }
+        button.quiet { background: #3f3a34; }
+        .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .status { min-height: 1.4em; font-weight: 650; }
+        .hex { font-family: ui-monospace, monospace; color: var(--muted); min-height: 1.4em; }
+        .pad {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            max-width: 280px;
+            margin: 12px 0;
+        }
+        .pad button {
+            min-height: 56px;
+            padding: 8px 4px;
+            background: #2b2824;
+            font-size: 15px;
+        }
+        .swatch {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #c8bbaa;
+        }
+        a.bookmark {
+            display: inline-block;
+            background: var(--ink);
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 650;
+        }
+        ol { margin: 8px 0 0; padding-left: 1.2rem; }
+        label { display: block; margin: 10px 0 4px; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>WowWee MiP</h1>
+    <p class="lede">Drive the robot from this page, or drop a bookmark onto MakeCode Arcade so a game can drive it.</p>
+    <div class="grid">
+        <section>
+            <h2>Direct control</h2>
+            <p class="status" data-status>Not connected.</p>
+            <div class="row">
+                <button type="button" data-connect>Connect MiP</button>
+                <button type="button" class="quiet" data-any>Other device</button>
+            </div>
+            <div class="pad" aria-label="Drive pad">
+                <span></span>
+                <button type="button" data-dir="up">Forward</button>
+                <span></span>
+                <button type="button" data-dir="left">Left</button>
+                <button type="button" data-stop>Stop</button>
+                <button type="button" data-dir="right">Right</button>
+                <span></span>
+                <button type="button" data-dir="down">Back</button>
+                <span></span>
+            </div>
+            <p>Arrow keys drive while this page is focused. Hold a pad button to drive too.</p>
+            <div class="row" aria-label="Chest colors">
+                <button type="button" class="swatch" data-color="0,255,0" style="background:#00c853" aria-label="Green chest"></button>
+                <button type="button" class="swatch" data-color="255,0,0" style="background:#e53935" aria-label="Red chest"></button>
+                <button type="button" class="swatch" data-color="0,80,255" style="background:#1e88e5" aria-label="Blue chest"></button>
+                <button type="button" class="swatch" data-color="255,220,0" style="background:#fdd835" aria-label="Yellow chest"></button>
+                <button type="button" class="swatch" data-color="255,255,255" style="background:#fff" aria-label="White chest"></button>
+                <button type="button" class="swatch" data-color="0,0,0" style="background:#111" aria-label="Chest off"></button>
+            </div>
+            <label for="sound">Sound</label>
+            <div class="row">
+                <select id="sound" data-sound-list>
+                    <option value="35">Hello</option>
+                    <option value="80">Yeah</option>
+                    <option value="29">Go</option>
+                    <option value="57">Oops</option>
+                    <option value="73">Trumpet</option>
+                    <option value="105">Stop sound</option>
+                </select>
+                <button type="button" data-sound>Play</button>
+            </div>
+            <label for="volume">Volume <span data-volume-label>5</span></label>
+            <input id="volume" data-volume type="range" min="0" max="7" value="5">
+            <div class="row" style="margin-top:12px">
+                <button type="button" class="quiet" data-fall>Fall forward</button>
+                <button type="button" class="quiet" data-up>Get up</button>
+            </div>
+            <p class="hex" data-hex></p>
+        </section>
+        <section>
+            <h2>MakeCode Arcade</h2>
+            <p data-bookmark-note>Building the bookmark…</p>
+            <p><a class="bookmark" data-bookmark href="#">MiP Connect</a></p>
+            <div class="row">
+                <button type="button" class="quiet" data-copy>Copy bookmarklet</button>
+            </div>
+            <ol>
+                <li>In this folder run python3 -m http.server, then open the page in Chrome or Edge.</li>
+                <li>Drag <strong>MiP Connect</strong> to the bookmarks bar.</li>
+                <li>In <a href="https://arcade.makecode.com/">MakeCode Arcade</a>, import this extension and start a game.</li>
+                <li>Click the bookmark. A MiP card appears. Choose Connect and pick the robot named Mip-…</li>
+                <li>Use the MiP blocks. The line at the bottom of the simulator shows the link.</li>
+            </ol>
+            <p>Chrome and Edge on a computer or Android can open the Bluetooth chooser. Safari cannot.</p>
+        </section>
+    </div>
+</main>
+<script src="packets.js"></script>
+<script src="ble.js"></script>
+<script src="manual.js"></script>
+</body>
+</html>

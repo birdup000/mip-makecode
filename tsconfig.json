@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": true,
+        "outDir": "built",
+        "rootDir": "."
+    },
+    "exclude": [
+        "node_modules",
+        "built",
+        "connect",
+        "test"
+    ]
+}

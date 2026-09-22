@@ -1,0 +1,22 @@
+{
+    "name": "mip",
+    "version": "0.1.0",
+    "description": "Drive a WowWee MiP robot from MakeCode Arcade",
+    "license": "MIT",
+    "dependencies": {
+        "device": "*"
+    },
+    "files": [
+        "README.md",
+        "mip.ts",
+        "packets.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": true,
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "tsprj"
+}

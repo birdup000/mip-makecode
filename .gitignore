@@ -1,0 +1,8 @@
+built/
+node_modules/
+pxt_modules/
+.pxt/
+*.uf2
+*.hex
+*.asm
+*.elf
