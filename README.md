@@ -16,7 +16,7 @@ The starter program uses the arrow keys to drive. **A** turns the chest green an
 
 ## Connect the robot
 
-The simulator cannot open the Bluetooth chooser itself. A bookmark on the MakeCode page does that. Use Chrome or Edge. Turn MiP on and stand it upright. It shows up with a name like `Mip-14915`.
+The simulator cannot open the Bluetooth chooser itself. A bookmark on the MakeCode page does that. Use Chrome or Edge. Turn MiP on and stand it upright. A new robot is named like `Mip-14915`. If it was renamed in the WowWee app, the chooser shows that name instead.
 
 On Linux, Chrome ships with Web Bluetooth switched off, so `navigator.bluetooth` does not exist and no picker ever opens. Chrome must be started with `--enable-features=WebBluetooth`.
 

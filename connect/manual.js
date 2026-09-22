@@ -92,7 +92,7 @@ function beginConnect(acceptAll) {
     }
     connecting = true
     connectButton.disabled = true
-    showStatus("Look for the Bluetooth picker in Chrome and choose Mip-…")
+    showStatus("Look for the Bluetooth picker and choose your MiP. A renamed robot keeps its own name.")
     session.connect(acceptAll)
 }
 

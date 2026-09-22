@@ -77,4 +77,14 @@ for (const name of ["OP_HELLO", "OP_DISCONNECT", "OP_WRITE", "OP_STATUS", "OP_ER
 assert.deepStrictEqual(Array.from(ble.toBytes([1, 2, 16])), [1, 2, 16])
 assert.deepStrictEqual(Array.from(ble.toBytes(Uint8Array.from([0x10, 0x77]))), [0x10, 0x77])
 
+const filtered = ble.deviceRequestOptions(false)
+assert.ok(filtered.filters.some(function (filter) {
+    return filter.services && filter.services.indexOf("0000fff0-0000-1000-8000-00805f9b34fb") >= 0
+        && filter.services.indexOf("0000ffb0-0000-1000-8000-00805f9b34fb") >= 0
+}))
+assert.ok(filtered.filters.some(function (filter) {
+    return filter.manufacturerData && filter.manufacturerData[0].companyIdentifier === 0x0500
+}))
+assert.strictEqual(ble.deviceRequestOptions(true).acceptAllDevices, true)
+
 console.log("protocol tests passed")

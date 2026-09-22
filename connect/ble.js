@@ -16,6 +16,27 @@
     const RECV_SERVICE = "0000ffe0-0000-1000-8000-00805f9b34fb"
     const RECV_CHAR = "0000ffe4-0000-1000-8000-00805f9b34fb"
     const SERVICES = [SEND_SERVICE, RECV_SERVICE]
+    // Broadcast fields from the WowWee scan record. They stay put when the robot is renamed.
+    const ADV_SERVICES = [
+        "0000fff0-0000-1000-8000-00805f9b34fb",
+        "0000ffb0-0000-1000-8000-00805f9b34fb"
+    ]
+    const MIP_COMPANY_ID = 0x0500
+
+    function deviceRequestOptions(acceptAll) {
+        if (acceptAll) return { acceptAllDevices: true, optionalServices: SERVICES }
+        return {
+            filters: [
+                { namePrefix: "Mip" },
+                { namePrefix: "MiP" },
+                { namePrefix: "MIP" },
+                { namePrefix: "Wow" },
+                { services: ADV_SERVICES },
+                { manufacturerData: [{ companyIdentifier: MIP_COMPANY_ID }] }
+            ],
+            optionalServices: SERVICES
+        }
+    }
 
     function decodeNotification(bytes) {
         if (!bytes || bytes.length < 2 || bytes.length % 2 !== 0) return copyBytes(bytes)
@@ -153,17 +174,7 @@
                 return
             }
             try {
-                const options = acceptAll
-                    ? { acceptAllDevices: true, optionalServices: SERVICES }
-                    : {
-                        filters: [
-                            { namePrefix: "Mip" },
-                            { namePrefix: "MiP" },
-                            { namePrefix: "MIP" },
-                            { namePrefix: "Wow" }
-                        ],
-                        optionalServices: SERVICES
-                    }
+                const options = deviceRequestOptions(acceptAll)
                 const next = await bluetooth.requestDevice(options)
                 if (device && device.gatt && device.gatt.connected) {
                     ignoreDrop = true
@@ -391,7 +402,8 @@
         decodeNotification: decodeNotification,
         toBytes: toBytes,
         createSession: createSession,
-        installBridge: installBridge
+        installBridge: installBridge,
+        deviceRequestOptions: deviceRequestOptions
     }
 
     if (typeof module !== "undefined" && module.exports) module.exports = api
