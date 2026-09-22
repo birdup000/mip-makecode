@@ -1,4 +1,5 @@
-// Arrow keys drive MiP. A plays a sound and turns the chest green. B stops.
+// This project already includes the MiP blocks.
+// Arrow keys drive. A turns the chest green and plays a sound. B stops.
 mip.connect()
 mip.showRobot(true)
 mip.driveWithArrows(true)

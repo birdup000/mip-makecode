@@ -7,16 +7,13 @@
         "device": "*"
     },
     "files": [
-        "README.md",
+        "main.ts",
         "mip.ts",
-        "packets.ts"
+        "packets.ts",
+        "README.md"
     ],
-    "testFiles": [
-        "test.ts"
-    ],
-    "public": true,
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "tsprj"
+    "preferredEditor": "blocksprj"
 }
